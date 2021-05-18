@@ -32,9 +32,18 @@ class Guard(Person):
     def __init__(self):
         super().__init__(names.get_first_name(gender='male'), names.get_last_name())
         self.power = random.randint(1, 60)
+        self.isDead = False
 
     def introduce(self):
         return self.name + " " + self.lastname
+
+    def shooting(self):
+        self.power += -20
+        if self.power <= 0:
+            self.isDead = True
+
+    def is_dead(self):
+        return self.isDead
 
 
 class Lock:
@@ -50,22 +59,23 @@ class Gun:
 
 class View:
     Part = Game()
-    Guard1 = Guard()
-    Guard2 = Guard()
-    Guard3 = Guard()
-    Civil1 = Guard()
+    SpawnedGuard = []
+    SpawnedGuard[0] = Guard()
+    SpawnedGuard[1] = Guard()
+    SpawnedGuard[2] = Guard()
+    SpawnedGuard[3] = Guard()
     desc = [
         "Jesteś agentem 123 i musisz ukraść superbroń z bazy złej organizacji, to jana misja dlatego nie możesz dać się zauważyć.",
         "Widzisz pokój kontrolny z kamerami.",
-        "Widzisz strażnika " + Guard1.introduce() + " w pokoju z kamerami.",
+        "Widzisz strażnika " + SpawnedGuard[0].introduce() + " w pokoju z kamerami.",
         "Na końcu korytarza widzisz stalowe zamknięte drzwi",
-        "Widzisz dwóch rozmawiających ze sobą strażników  " + Guard2.introduce() + " i " + Guard3.introduce(),
-        "Zauważa cię cywilny pracownik (" + Civil1.introduce() + ").",
+        "Widzisz dwóch rozmawiających ze sobą strażników  " + SpawnedGuard[1].introduce() + " i " + SpawnedGuard[2].introduce(),
+        "Zauważa cię cywilny pracownik (" + SpawnedGuard[3].introduce() + ").",
         "Widzisz zbrojownię co robisz?",
         "Wchodzisz do dużego magazynu. Po drugiej stronie pomieszczenia widzisz przełącznik przeciwpożarowy.",
         "Przed twoimi oczami pojawia się się wielki sejf z zamkiem elektronicznym.",
         "Znajdujesz w sejfie tajną broń zabierasz ją i uciekasz włazem"
-        ]
+    ]
     picks = [
         ["Wejdź do budynku przez wentylację. (zabiera 5 czasu daje 5% wykrycia)", 1, 2, -5, 5, 0],
         ["Wejdź do budynku przez okno. ( zabiera 10 czasu daje 10% wykrycia)", 1, 2, 0, 0, 0],
@@ -93,19 +103,8 @@ class View:
         ["Uciekasz korytarzem w prawo.", 10, 11, 0, 0, 0]
     ]
 
-    def text_wrapper(self, left, right, fill_char):
-        try:
-            columns, rows = os.get_terminal_size(0)
-        except OSError:
-            columns, rows = os.get_terminal_size(1)
-        return str(left) + str(fill_char)*(columns - len(left) - len(right)) + str(right)
-
-
-    def clearConsole(self):
-        os.system('cls')
-
     def welcome(self):
-        self.clearConsole()
+        clearConsole()
         print("")
         print(
             "|---------------------------------------------------------------------------------------------------------|")
@@ -127,7 +126,7 @@ class View:
             self.weapon_pick()
 
     def start(self):
-        self.clearConsole()
+        clearConsole()
         print("")
         print("|------------|")
         print("| [1] Start  |")
@@ -145,7 +144,7 @@ class View:
             return
 
     def rules(self):
-        self.clearConsole()
+        clearConsole()
         print("")
         print(
             "|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------|")
@@ -178,7 +177,7 @@ class View:
         print("")
 
     def action_pick(self, stage):
-        self.clearConsole()
+        clearConsole()
         print(self.desc[stage - 1])
         i = 0
         tab = []
@@ -207,13 +206,13 @@ class View:
                         self.action_pick(tab[t - 1][0])
 
     def gameover_lost(self, stage):
-        self.clearConsole()
+        clearConsole()
         print("")
         print(" Zostałeś złapany!")
         print(" Twój wynik to: ", stage)
 
     def gameover_win(self):
-        self.clearConsole()
+        clearConsole()
         print("")
         print(" Gratulacje!")
         print(" Udało Ci się wykraść niebezpieczną broń.")
@@ -221,7 +220,7 @@ class View:
               "czas - ", self.Part.time)
 
     def weapon_pick(self):
-        self.clearConsole()
+        clearConsole()
         print("")
         print(
             "|---------------------------------------------------------------------------------------------------------|")
@@ -242,25 +241,27 @@ class View:
         if ch == "1":
             self.Weapon = Gun('Plainsrider Bow', 3)
             self.Part.add_threat(-20)
+            self.class_pick()
         elif ch == "2":
-            self.class_pick('USP Compact Tactical', 10)
+            self.Weapon = Gun('USP Compact Tactical', 10)
             self.Part.add_threat(0)
+            self.class_pick()
 
         elif ch == "3":
-            self.class_pick('Vulcan Minigun', 20)
+            self.Weapon = Gun('Vulcan Minigun', 20)
             self.Part.add_threat(25)
+            self.class_pick()
 
     def class_pick(self):
-        self.clearConsole()
+        clearConsole()
         print("")
-        print(
-            "|---------------------------------------------------------------------------------------------------------|")
-        print(
-            "| Wybierz Klasę                                                                                           |")
-        print(
-            "| Wybieraj mądrze.                                                                                        |")
-        print(
-            "|---------------------------------------------------------------------------------------------------------|")
+        print(text_wrapper("|", "| ", "-"))
+        print(text_wrapper("| Wybierz Klasę", "| ", " "))
+        print(text_wrapper("| Wybieraj mądrze.", "| ", " "))
+        print(text_wrapper("| 1. Ghost.", "| ", " "))
+        print(text_wrapper("| 2. Anarchist.", "| ", " "))
+        print(text_wrapper("| 3. Gambler.", "| ", " "))
+        print(text_wrapper("|", "|", "-"))
         print("")
         ch = readkeys.getch()
         if ch == "1":
@@ -274,13 +275,22 @@ class View:
             self.action_pick(1)
 
 
+def clearConsole():
+    os.system('cls')
 
+
+def text_wrapper(left, right, fill_char):
+    try:
+        columns, rows = os.get_terminal_size(0)
+    except OSError:
+        columns, rows = os.get_terminal_size(1)
+    return str(left) + str(fill_char) * (columns - len(left) - len(right)) + str(right)
 
 
 def main():
     print('elo')
-    #Screen = View()
-    #Screen.start()
+    Screen = View()
+    Screen.start()
 
     input()
 
