@@ -236,20 +236,13 @@ class View:
     def weapon_pick(self):
         clearConsole()
         print("")
-        print(
-            "|---------------------------------------------------------------------------------------------------------|")
-        print(
-            "| Wybierz Broń                                                                                            |\n")
-        print(
-            "| 1. Plainsrider Bow                                                                                      |")
-        print(
-            "| 2. USP Compact Tactical                                                                                 |")
-        print(
-            "| 3. Vulcan Minigun                                                                                       |")
-        print(
-            "| Wybieraj mądrze.                                                                                        |")
-        print(
-            "|---------------------------------------------------------------------------------------------------------|")
+        print(text_wrapper('|', '|', '-'))
+        print(text_wrapper('| Wybierz Broń', '|', ' '))
+        print(text_wrapper('| 1. Plainsrider Bow', '|', ' '))
+        print(text_wrapper('| 2. USP Compact Tactical', '|', ' '))
+        print(text_wrapper('| 3. Vulcan Minigun', '|', ' '))
+        print(text_wrapper('| Wybieraj mądrze.', '|', ' '))
+        print(text_wrapper('|', '|', '-'))
         print("")
         ch = readkeys.getch()
         if ch == "1":
