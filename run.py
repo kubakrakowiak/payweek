@@ -56,14 +56,20 @@ class Gun:
         self.name = name
         self.ammo = ammo
 
+    def ammo_check(self):
+        return self.ammo
+
+    def add_ammo(self, value):
+        self.ammo += value
 
 class View:
     Part = Game()
     SpawnedGuard = []
-    SpawnedGuard[0] = Guard()
-    SpawnedGuard[1] = Guard()
-    SpawnedGuard[2] = Guard()
-    SpawnedGuard[3] = Guard()
+    SpawnedGuard.append(Guard())
+    SpawnedGuard.append(Guard())
+    SpawnedGuard.append(Guard())
+    SpawnedGuard.append(Guard())
+    Weapon = Gun('Default', 0)
     desc = [
         "Jesteś agentem 123 i musisz ukraść superbroń z bazy złej organizacji, to jana misja dlatego nie możesz dać się zauważyć.",
         "Widzisz pokój kontrolny z kamerami.",
@@ -77,24 +83,24 @@ class View:
         "Znajdujesz w sejfie tajną broń zabierasz ją i uciekasz włazem"
     ]
     picks = [
-        ["Wejdź do budynku przez wentylację. (zabiera 5 czasu daje 5% wykrycia)", 1, 2, -5, 5, 0],
+        ["Wejdź do budynku przez wentylację. (zabiera 5 czasu daje 5% wykrycia)", 1, 2, -5, 5, 0], #desc, stage, destination, time, guards
         ["Wejdź do budynku przez okno. ( zabiera 10 czasu daje 10% wykrycia)", 1, 2, 0, 0, 0],
         ["Wejdź frontowymi drzwiami. ( zabiera 1 czasu daje 100% wykrycia)", 1, 2, -1, 100, 0],
         ["Wyłącz kamery. (zabiera 10 czasu odejmuje 15% wykrycia)", 2, 3, -10, 15, 0],
         ["Idź dalej korytarzem. (zabiera 1 czasu)", 2, 4, -1, 0, 0],
-        ["Strzelasz do strażnika.(zabiera 1 czasu, zabiera 1 pocisk)", 3, 4, -1, 0, -1],
+        ["Strzelasz do strażnika.(zabiera 1 czasu, zabiera 1 pocisk)", 3, 4, -1, 0, 1],
         ["Ogłuszasz strażnika.(zabiera 5 czasu)", 3, 4, -5, 0, 0],
         ["Otwierasz zamek wytrychem.(zabiera 5 czasu)", 4, 5, -5, 0, 0],
-        ["Strzelasz do zamka. (zabiera 1 czasu, zwiększa wykrycie o 3%, zabiera 1 ammo)", 4, 5, -1, 3, -1],
+        ["Strzelasz do zamka. (zabiera 1 czasu, zwiększa wykrycie o 3%, zabiera 1 ammo)", 4, 5, -1, 3, 0],
         ["Przekradasz się obok nich. (zabiera 5 czasu)", 5, 6, -5, 0, 0],
-        ["Strzelasz do nich. (zabiera 1 czasu, zabiera 2 ammo)", 5, 6, -1, 0, -2],
+        ["Strzelasz do nich. (zabiera 1 czasu, zabiera 2 ammo)", 5, 6, -1, 0, 2],
         ["Bijesz się z nimi. (zabiera 2 czasu, podnosi wykrycie o 10%)", 5, 6, -2, 10, 0],
         ["Uciekasz przed nimi. (tracisz 1 czasu, wykrycie wzrasta)", 6, 7, -1, 10, 0],
         ["Obezwładniasz cywila. (tracisz 5 czasu)", 6, 7, -5, 0, 0],
-        ["Przeszukujesz ją w poszukiwaniu amunicji. (dodaje x naboi, tracisz 5 czasu)", 7, 8, -5, 0, 2],
+        ["Przeszukujesz ją w poszukiwaniu amunicji. (dodaje x naboi, tracisz 5 czasu)", 7, 8, -5, 0, 0],
         ["Idziesz dalej korytarzem. (tracisz 1 czasu)", 7, 8, -2, 0, 0],
         ["Strzelsz w przełącznik odwracając uwagę strażników. (odejmuje 5 czasu, odejmuje 10 wykrycia, odejmuje 1 "
-         "amunicji)", 8, 9, -5, -10, -1],
+         "amunicji)", 8, 9, -5, -10, 0],
         ["Przełączasz czujnik  ręcznie. (odejmuje 10 czasu, odejmuje 10 wykrycia)", 8, 9, -10, -10, 0],
         ["Ignorujesz czujnik. (odejmuje 1 czasu)", 8, 9, -1, 0, 0],
         ["Hakujesz drzwi. (zabiera 5 czasu daje 5 wykrycia)", 9, 10, -5, 5, 0],
@@ -105,21 +111,22 @@ class View:
 
     def welcome(self):
         clearConsole()
+        print(text_wrapper("|", "|", "-"))
+        print(
+            text_wrapper("| Jesteś tajnym agentem, który musi wykraść niebezpieczną broń złej organizacji.", "|", " "))
+        print(text_wrapper(
+            "| Zadanie nie należy do najprostrzych, musisz wykazać się sprytem i dobrze zarządzać dostępnymi zasobami.",
+            "|", " "))
+        print(text_wrapper("| Każdy wybór ma znaczenie! ", "|", " "))
+        print(text_wrapper("|", "|", "-"))
         print("")
-        print(
-            "|---------------------------------------------------------------------------------------------------------|")
-        print(
-            "| Jesteś tajnym agentem, który musi wykraść niebezpieczną broń złej organizacji.                          |")
-        print(
-            "| Zadanie nie należy do najprostrzych, musisz wykazać się sprytem i dobrze zarządzać dostępnymi zasobami. |")
-        print(
-            "| Każdy wybór ma znaczenie!                                                                               |")
-        print(
-            "| Wybieraj mądrze.                                                                                        |")
-        print(
-            "| Wciśnij Spacje.                                                                                         |")
-        print(
-            "|---------------------------------------------------------------------------------------------------------|")
+        print(text_wrapper("|", "|", "-"))
+        print(text_wrapper("| Wybieraj mądrze.", "|", " "))
+        print(text_wrapper("|", "|", "-"))
+        print("")
+        print(text_wrapper("|", "|", "-"))
+        print(text_wrapper("| Wciśnij spacje.", "|", " "))
+        print(text_wrapper("|", "|", "-"))
         print("")
         ch = readkeys.getch()
         if ch == " ":
@@ -178,6 +185,12 @@ class View:
 
     def action_pick(self, stage):
         clearConsole()
+        print(text_wrapper("|", "|", "-"))
+        print(text_wrapper("|    John Wick", "Stage: " + str(stage) + "         |", " "))
+        print(text_wrapper("|", "Ammo: " + str(self.Weapon.ammo) + "         |", " "))
+        print(text_wrapper("|", "Time: " + str(self.Part.time) + "         |", " "))
+        print(text_wrapper("|", "Threat: " + str(self.Part.threat) + "         |", " "))
+        print(text_wrapper("|", "|", "-"))
         print(self.desc[stage - 1])
         i = 0
         tab = []
@@ -207,16 +220,17 @@ class View:
 
     def gameover_lost(self, stage):
         clearConsole()
-        print("")
+        print(text_wrapper("|", "|", "-"))
         print(" Zostałeś złapany!")
         print(" Twój wynik to: ", stage)
+        print(text_wrapper("|", "|", "-"))
 
     def gameover_win(self):
         clearConsole()
         print("")
         print(" Gratulacje!")
         print(" Udało Ci się wykraść niebezpieczną broń.")
-        print(" Twój wynik to: amunicja - ", "2", "", "|", "", "wykrycie - ", self.Part.threat, "", "|", "", "",
+        print(" Twój wynik to: amunicja - ", self.Weapon.ammo_check(), "", "|", "", "wykrycie - ", self.Part.threat, "", "|", "", "",
               "czas - ", self.Part.time)
 
     def weapon_pick(self):
@@ -265,13 +279,13 @@ class View:
         print("")
         ch = readkeys.getch()
         if ch == "1":
-            self.Character = Player("Jakub", "Wick", 0)
+            self.Character = Player("John", "Wick", 0)
             self.action_pick(1)
         elif ch == "2":
-            self.Character = Player("Jakub", "Wick", 1)
+            self.Character = Player("John", "Wick", 1)
             self.action_pick(1)
         elif ch == "3":
-            self.Character = Player("Jakub", "Wick", 2)
+            self.Character = Player("John", "Wick", 2)
             self.action_pick(1)
 
 
